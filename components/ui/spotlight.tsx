@@ -1,92 +1,128 @@
-'use client';
-import React, { useRef, useState, useCallback, useEffect } from 'react';
-import { motion, useSpring, useTransform, SpringOptions } from 'framer-motion';
-import { cn } from '@/lib/utils';
+"use client";
+import React from "react";
+import { motion } from "motion/react";
 
 type SpotlightProps = {
-  className?: string;
-  size?: number;
-  springOptions?: SpringOptions;
+  gradientFirst?: string;
+  gradientSecond?: string;
+  gradientThird?: string;
+  translateY?: number;
+  width?: number;
+  height?: number;
+  smallWidth?: number;
+  duration?: number;
+  xOffset?: number;
 };
 
-export function Spotlight({
-  className,
-  size = 150, // Increased size for better visibility
-  springOptions = { stiffness: 50, damping: 15, mass: 1 }, // Smooth motion settings
-}: SpotlightProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [isHovered, setIsHovered] = useState(false);
-  const [parentElement, setParentElement] = useState<HTMLElement | null>(null);
-
-  const mouseX = useSpring(0, springOptions);
-  const mouseY = useSpring(0, springOptions);
-
-  const spotlightLeft = useTransform(mouseX, (x) => `${x - size / 2}px`);
-  const spotlightTop = useTransform(mouseY, (y) => `${y - size / 2}px`);
-
-  useEffect(() => {
-    if (containerRef.current) {
-      const parent = containerRef.current.closest('.card-parent');
-      if (parent) {
-        (parent as HTMLElement).style.position = 'relative';
-        (parent as HTMLElement).style.overflow = 'hidden';
-        setParentElement(parent as HTMLElement);
-      }
-    }
-  }, []);
-
-  const handleMouseMove = useCallback(
-    (event: MouseEvent) => {
-      if (!parentElement) return;
-      const { left, top, width, height } = parentElement.getBoundingClientRect();
-      const expandedArea = 200; // Expanded interaction area
-
-      const x = Math.min(
-        Math.max(event.clientX - left, -expandedArea),
-        width + expandedArea
-      );
-      const y = Math.min(
-        Math.max(event.clientY - top, -expandedArea),
-        height + expandedArea
-      );
-
-      mouseX.set(x);
-      mouseY.set(y);
-    },
-    [mouseX, mouseY, parentElement]
-  );
-
-  useEffect(() => {
-    if (!parentElement) return;
-
-    parentElement.addEventListener('mousemove', handleMouseMove);
-    parentElement.addEventListener('mouseenter', () => setIsHovered(true));
-    parentElement.addEventListener('mouseleave', () => setIsHovered(false));
-
-    return () => {
-      parentElement.removeEventListener('mousemove', handleMouseMove);
-      parentElement.removeEventListener('mouseenter', () => setIsHovered(true));
-      parentElement.removeEventListener('mouseleave', () =>
-        setIsHovered(false)
-      );
-    };
-  }, [parentElement, handleMouseMove]);
-
+export const Spotlight = ({
+  gradientFirst = "radial-gradient(68.54% 68.72% at 55.02% 31.46%, hsla(210, 100%, 85%, .08) 0, hsla(210, 100%, 55%, .02) 50%, hsla(210, 100%, 45%, 0) 80%)",
+  gradientSecond = "radial-gradient(50% 50% at 50% 50%, hsla(210, 100%, 85%, .06) 0, hsla(210, 100%, 55%, .02) 80%, transparent 100%)",
+  gradientThird = "radial-gradient(50% 50% at 50% 50%, hsla(210, 100%, 85%, .04) 0, hsla(210, 100%, 45%, .02) 80%, transparent 100%)",
+  translateY = -350,
+  width = 560,
+  height = 1380,
+  smallWidth = 240,
+  duration = 7,
+  xOffset = 100,
+}: SpotlightProps = {}) => {
   return (
     <motion.div
-      ref={containerRef}
-      className={cn(
-        'pointer-events-none absolute rounded-full bg-[radial-gradient(circle_at_center,var(--tw-gradient-stops),transparent_80%)] blur-lg transition-opacity duration-300',
-        'from-blue-500 via-blue-300 to-transparent',
-        isHovered ? 'opacity-100' : 'opacity-0',
-        className
-      )}
-      style={{
-        width: size,
-        height: size,
-        left: spotlightLeft,
-        top: spotlightTop,
+      initial={{
+        opacity: 0,
       }}
-    />
+      animate={{
+        opacity: 1,
+      }}
+      transition={{
+        duration: 1.5,
+      }}
+      className="pointer-events-none absolute inset-0 h-full w-full"
+    >
+      <motion.div
+        animate={{
+          x: [0, xOffset, 0],
+        }}
+        transition={{
+          duration,
+          repeat: Infinity,
+          repeatType: "reverse",
+          ease: "easeInOut",
+        }}
+        className="absolute top-0 left-0 w-screen h-screen z-40 pointer-events-none"
+      >
+        <div
+          style={{
+            transform: `translateY(${translateY}px) rotate(-45deg)`,
+            background: gradientFirst,
+            width: `${width}px`,
+            height: `${height}px`,
+          }}
+          className={`absolute top-0 left-0`}
+        />
+
+        <div
+          style={{
+            transform: "rotate(-45deg) translate(5%, -50%)",
+            background: gradientSecond,
+            width: `${smallWidth}px`,
+            height: `${height}px`,
+          }}
+          className={`absolute top-0 left-0 origin-top-left`}
+        />
+
+        <div
+          style={{
+            transform: "rotate(-45deg) translate(-180%, -70%)",
+            background: gradientThird,
+            width: `${smallWidth}px`,
+            height: `${height}px`,
+          }}
+          className={`absolute top-0 left-0 origin-top-left`}
+        />
+      </motion.div>
+
+      <motion.div
+        animate={{
+          x: [0, -xOffset, 0],
+        }}
+        transition={{
+          duration,
+          repeat: Infinity,
+          repeatType: "reverse",
+          ease: "easeInOut",
+        }}
+        className="absolute top-0 right-0 w-screen h-screen z-40 pointer-events-none"
+      >
+        <div
+          style={{
+            transform: `translateY(${translateY}px) rotate(45deg)`,
+            background: gradientFirst,
+            width: `${width}px`,
+            height: `${height}px`,
+          }}
+          className={`absolute top-0 right-0`}
+        />
+
+        <div
+          style={{
+            transform: "rotate(45deg) translate(-5%, -50%)",
+            background: gradientSecond,
+            width: `${smallWidth}px`,
+            height: `${height}px`,
+          }}
+          className={`absolute top-0 right-0 origin-top-right`}
+        />
+
+        <div
+          style={{
+            transform: "rotate(45deg) translate(180%, -70%)",
+            background: gradientThird,
+            width: `${smallWidth}px`,
+            height: `${height}px`,
+          }}
+          className={`absolute top-0 right-0 origin-top-right`}
+        />
+      </motion.div>
+    </motion.div>
   );
-}
+};

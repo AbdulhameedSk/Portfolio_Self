@@ -2,8 +2,7 @@
 
 import React, { PropsWithChildren, useRef } from "react";
 import { cva, type VariantProps } from "class-variance-authority";
-import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
-
+import { motion, useMotionValue, useSpring, useTransform, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 export interface DockProps extends VariantProps<typeof dockVariants> {
@@ -36,13 +35,14 @@ const Dock = React.forwardRef<HTMLDivElement, DockProps>(
     const mouseX = useMotionValue(Infinity);
 
     const renderChildren = () => {
-      return React.Children.map(children, (child) => {
+      return React.Children.map(children, (child, index) => {
         if (React.isValidElement(child) && child.type === DockIcon) {
           return React.cloneElement(child, {
             ...child.props,
-            mouseX: mouseX,
-            magnification: magnification,
-            distance: distance,
+            mouseX,
+            magnification,
+            distance,
+            index,
           });
         }
         return child;
@@ -52,6 +52,9 @@ const Dock = React.forwardRef<HTMLDivElement, DockProps>(
     return (
       <motion.div
         ref={ref}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
         onMouseMove={(e) => mouseX.set(e.pageX)}
         onMouseLeave={() => mouseX.set(Infinity)}
         {...props}
@@ -61,7 +64,9 @@ const Dock = React.forwardRef<HTMLDivElement, DockProps>(
           "items-end": direction === "bottom",
         })}
       >
-        {renderChildren()}
+        <AnimatePresence>
+          {renderChildren()}
+        </AnimatePresence>
       </motion.div>
     );
   },
@@ -76,41 +81,69 @@ export interface DockIconProps {
   mouseX?: any;
   className?: string;
   children?: React.ReactNode;
-  props?: PropsWithChildren;
+  index?: number;
 }
 
 const DockIcon = ({
-  size,
+  size = 40,
   magnification = DEFAULT_MAGNIFICATION,
   distance = DEFAULT_DISTANCE,
   mouseX,
   className,
   children,
+  index = 0,
   ...props
 }: DockIconProps) => {
   const ref = useRef<HTMLDivElement>(null);
 
-  const distanceCalc = useTransform(mouseX, (val: number) => {
-    const bounds = ref.current?.getBoundingClientRect() ?? { x: 0, width: 0 };
-
-    return val - bounds.x - bounds.width / 2;
-  });
-
-  const widthSync = useTransform(
-    distanceCalc,
-    [-distance, 0, distance],
-    [40, magnification, 40],
-  );
-
-  const width = useSpring(widthSync, {
-    mass: 0.1,
-    stiffness: 150,
-    damping: 12,
-  });
+  // Only create the transforms if mouseX is defined
+  const width = mouseX ? useSpring(
+    useTransform(
+      mouseX,
+      (val: number) => {
+        const bounds = ref.current?.getBoundingClientRect() ?? { x: 0, width: 0 };
+        const distance = val - bounds.x - bounds.width / 2;
+        return Math.max(
+          size,
+          Math.min(
+            magnification,
+            size + (magnification - size) * (1 - Math.abs(distance) / DEFAULT_DISTANCE)
+          )
+        );
+      }
+    ),
+    {
+      mass: 0.1,
+      stiffness: 150,
+      damping: 12,
+    }
+  ) : size;
 
   return (
     <motion.div
       ref={ref}
+      initial={{ opacity: 0, scale: 0 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0 }}
+      transition={{ 
+        duration: 0.3, 
+        delay: index * 0.1,
+        scale: {
+          type: "spring",
+          damping: 12,
+          stiffness: 200,
+        }
+      }}
+      whileHover={{ 
+        scale: 1.5,  // Increased from 1.1 to 1.5 for more dramatic hover effect
+        rotate: 5,   // Added slight rotation for more dynamic feel
+        transition: { 
+          duration: 0.3,
+          type: "spring",
+          stiffness: 300
+        }
+      }}
+      whileTap={{ scale: 0.9 }}
       style={{ width }}
       className={cn(
         "flex aspect-square cursor-pointer items-center justify-center rounded-full",
