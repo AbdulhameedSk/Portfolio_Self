@@ -13,25 +13,25 @@ export function DockDemo() {
       <Dock direction="middle">
         <DockIcon>
           <FaGithub
-            className="size-6 hover:text-gray-400 transition duration-300"
+            className="size-6 text-gray-400 transition duration-300"
             onClick={() => window.open("https://github.com/abdulhameedSk/")}
           />
         </DockIcon>
         <DockIcon>
           <SiLeetcode
-            className="size-6 hover:text-yellow-500 transition duration-300"
+            className="size-6 text-yellow-500 transition duration-300"
             onClick={() => window.open("https://leetcode.com/SHAIKABDULHAMEED/")}
           />
         </DockIcon>
         <DockIcon>
           <FaLinkedin
-            className="size-6 hover:text-blue-500 transition duration-300"
+            className="size-6 text-blue-500 transition duration-300"
             onClick={() => window.open("https://linkedin.com/in/SHAIKABDULHAMEED/")}
           />
         </DockIcon>
         <DockIcon>
           <SiGmail
-            className="size-6 hover:text-red-500 transition duration-300"
+            className="size-6 text-red-500 transition duration-300"
             onClick={() => (window.location.href = "mailto:shaikabdulhameedd@gmail.com")}
           />
         </DockIcon>
@@ -42,7 +42,7 @@ export function DockDemo() {
 
 const AboutMe = () => {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen px-8 py-24 bg-gradient-to-br from-black to-gray-900 text-white relative">
+    <div className="flex flex-col items-center justify-center min-h-screen px-8  bg-black relative">
       
       {/* Subtle Floating Glow Effect */}
       <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-purple-500/10 blur-3xl opacity-40"></div>
