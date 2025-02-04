@@ -1,6 +1,6 @@
 "use client";
 
-import React, {  useRef } from "react";
+import React, { useRef } from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { motion, useMotionValue, useSpring, useTransform, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -26,7 +26,7 @@ const Dock = React.forwardRef<HTMLDivElement, DockProps>(
       className,
       children,
       magnification = DEFAULT_MAGNIFICATION,
-      // distance = DEFAULT_DISTANCE,
+      distance = DEFAULT_DISTANCE,
       direction = "bottom",
       ...props
     },
@@ -39,9 +39,8 @@ const Dock = React.forwardRef<HTMLDivElement, DockProps>(
         if (React.isValidElement(child) && child.type === DockIcon) {
           return React.cloneElement(child, {
             ...(child.props as object),
-            mouseX: mouseX as ReturnType<typeof useMotionValue>,
+            mouseX,
             magnification,
-            // distance, // Removed unused variable
             index,
           });
         }
@@ -77,7 +76,6 @@ Dock.displayName = "Dock";
 export interface DockIconProps {
   size?: number;
   magnification?: number;
-  distance?: number;
   mouseX?: ReturnType<typeof useMotionValue>;
   className?: string;
   children?: React.ReactNode;
@@ -87,7 +85,6 @@ export interface DockIconProps {
 const DockIcon = ({
   size = 40,
   magnification = DEFAULT_MAGNIFICATION,
-  distance = DEFAULT_DISTANCE,
   mouseX,
   className,
   children,
@@ -97,7 +94,8 @@ const DockIcon = ({
   const ref = useRef<HTMLDivElement>(null);
 
   // Only create the transforms if mouseX is defined
-  const transform = useTransform(mouseX as MotionValue<number>,
+  const transform = useTransform(
+    mouseX,
     (val: number) => {
       const bounds = ref.current?.getBoundingClientRect() ?? { x: 0, width: 0 };
       const distance = val - bounds.x - bounds.width / 2;
