@@ -5,7 +5,7 @@ import { FaGithub, FaLinkedin } from "react-icons/fa";
 import { SiLeetcode, SiGmail } from "react-icons/si";
 import { AnimatedText } from "@/components/ui/animated-underline-text-one";
 import React from "react";
-import { useScroll, useTransform, motion } from "framer-motion";
+import {  motion } from "framer-motion";
 
 export function DockDemo() {
   return (

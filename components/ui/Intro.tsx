@@ -4,10 +4,6 @@ import { STIX_Two_Text } from "next/font/google";
 import { SplineScene } from "@/components/ui/splite";
 import { Card } from "@/components/ui/card"
 import { Spotlight } from "@/components/ui/spotlight"
-const stixTwoText = STIX_Two_Text({
-    subsets: ["latin"],
-    weight: ["400", "700"],
-});
 
 export const Intro = () => {
     return (

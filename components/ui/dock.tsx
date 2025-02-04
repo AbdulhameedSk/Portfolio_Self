@@ -1,6 +1,6 @@
 "use client";
 
-import React, { PropsWithChildren, useRef } from "react";
+import React, {  useRef } from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { motion, useMotionValue, useSpring, useTransform, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -38,8 +38,8 @@ const Dock = React.forwardRef<HTMLDivElement, DockProps>(
       return React.Children.map(children, (child, index) => {
         if (React.isValidElement(child) && child.type === DockIcon) {
           return React.cloneElement(child, {
-            ...(typeof child.props === 'object' ? child.props : {}),
-            mouseX: mouseX as any,
+            ...child.props,
+            mouseX,
             magnification,
             distance,
             index,
@@ -51,14 +51,13 @@ const Dock = React.forwardRef<HTMLDivElement, DockProps>(
 
     return (
       <motion.div
-        {...(props as any)}
         ref={ref}
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
         onMouseMove={(e) => mouseX.set(e.pageX)}
         onMouseLeave={() => mouseX.set(Infinity)}
-        {...(props as Omit<React.HTMLAttributes<HTMLDivElement>, 'onDrag'>)}
+        {...props}
         className={cn(dockVariants({ className }), {
           "items-start": direction === "top",
           "items-center": direction === "middle",
@@ -75,8 +74,7 @@ const Dock = React.forwardRef<HTMLDivElement, DockProps>(
 
 Dock.displayName = "Dock";
 
-export interface DockIconProps extends React.HTMLAttributes<HTMLDivElement> {
-  mouseX?: any;
+export interface DockIconProps {
   size?: number;
   magnification?: number;
   distance?: number;

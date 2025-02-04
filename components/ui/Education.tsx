@@ -109,7 +109,7 @@ export function Education() {
           words="Education Journey" 
         />
         <p className="text-neutral-400 text-sm md:text-base max-w-2xl mb-12">
-          My journey in tech has been a continuous evolution of learning and building. Here's a timeline of my educational path and key milestones.
+          My journey in tech has been a continuous evolution of learning and building. Here&apos;s a timeline of my educational path and key milestones.
         </p>
       </div>
       <Timeline data={data} />
