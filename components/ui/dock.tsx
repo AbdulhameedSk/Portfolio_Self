@@ -26,7 +26,7 @@ const Dock = React.forwardRef<HTMLDivElement, DockProps>(
       className,
       children,
       magnification = DEFAULT_MAGNIFICATION,
-      distance = DEFAULT_DISTANCE,
+      // distance = DEFAULT_DISTANCE,
       direction = "bottom",
       ...props
     },
@@ -39,7 +39,7 @@ const Dock = React.forwardRef<HTMLDivElement, DockProps>(
         if (React.isValidElement(child) && child.type === DockIcon) {
           return React.cloneElement(child, {
             ...(child.props as object),
-            mouseX,
+            mouseX: mouseX as ReturnType<typeof useMotionValue>,
             magnification,
             // distance, // Removed unused variable
             index,
@@ -97,9 +97,7 @@ const DockIcon = ({
   const ref = useRef<HTMLDivElement>(null);
 
   // Only create the transforms if mouseX is defined
-  const transform = useTransform(
-    
-    mouseX,
+  const transform = useTransform(mouseX as MotionValue<number>,
     (val: number) => {
       const bounds = ref.current?.getBoundingClientRect() ?? { x: 0, width: 0 };
       const distance = val - bounds.x - bounds.width / 2;
