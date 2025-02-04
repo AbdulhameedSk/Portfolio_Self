@@ -29,13 +29,13 @@ const Dock = React.forwardRef<HTMLDivElement, DockProps>(
     },
     ref,
   ) => {
-    const mouseX = useMotionValue(Infinity);
+    const mouseX = useMotionValue<number>(Infinity);
 
     const renderChildren = () => {
       return React.Children.map(children, (child, index) => {
         if (React.isValidElement(child) && child.type === DockIcon) {
           return React.cloneElement(child, {
-            ...(child.props as object),
+            ...(child.props as DockIconProps),
             mouseX,
             magnification,
             index,
@@ -98,11 +98,12 @@ const DockIcon = ({
 
   const width = useSpring(
     useTransform(mouseX, (val: number) => {
+      const distance = Math.abs(val - (ref.current?.offsetLeft ?? 0) - size / 2);
       return Math.max(
         size,
         Math.min(
           magnification,
-          size + (magnification - size) * (1 - Math.abs(140) / 140)
+          size + (magnification - size) * (1 - distance / 140)
         )
       );
     }),
