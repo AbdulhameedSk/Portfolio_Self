@@ -38,10 +38,10 @@ const Dock = React.forwardRef<HTMLDivElement, DockProps>(
       return React.Children.map(children, (child, index) => {
         if (React.isValidElement(child) && child.type === DockIcon) {
           return React.cloneElement(child, {
-            ...child.props,
+            ...(child.props as object),
             mouseX,
             magnification,
-            distance,
+            // distance, // Removed unused variable
             index,
           });
         }
@@ -78,7 +78,7 @@ export interface DockIconProps {
   size?: number;
   magnification?: number;
   distance?: number;
-  mouseX?: any;
+  mouseX?: ReturnType<typeof useMotionValue>;
   className?: string;
   children?: React.ReactNode;
   index?: number;
@@ -97,27 +97,27 @@ const DockIcon = ({
   const ref = useRef<HTMLDivElement>(null);
 
   // Only create the transforms if mouseX is defined
-  const width = mouseX ? useSpring(
-    useTransform(
-      mouseX,
-      (val: number) => {
-        const bounds = ref.current?.getBoundingClientRect() ?? { x: 0, width: 0 };
-        const distance = val - bounds.x - bounds.width / 2;
-        return Math.max(
-          size,
-          Math.min(
-            magnification,
-            size + (magnification - size) * (1 - Math.abs(distance) / DEFAULT_DISTANCE)
-          )
-        );
-      }
-    ),
-    {
-      mass: 0.1,
-      stiffness: 150,
-      damping: 12,
+  const transform = useTransform(
+    
+    mouseX,
+    (val: number) => {
+      const bounds = ref.current?.getBoundingClientRect() ?? { x: 0, width: 0 };
+      const distance = val - bounds.x - bounds.width / 2;
+      return Math.max(
+        size,
+        Math.min(
+          magnification,
+          size + (magnification - size) * (1 - Math.abs(distance) / DEFAULT_DISTANCE)
+        )
+      );
     }
-  ) : size;
+  );
+
+  const width = useSpring(transform, {
+    mass: 0.1,
+    stiffness: 150,
+    damping: 12,
+  });
 
   return (
     <motion.div

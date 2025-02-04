@@ -1,6 +1,5 @@
 'use client'
 
-import { STIX_Two_Text } from "next/font/google";
 import { SplineScene } from "@/components/ui/splite";
 import { Card } from "@/components/ui/card"
 import { Spotlight } from "@/components/ui/spotlight"

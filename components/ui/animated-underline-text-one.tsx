@@ -25,7 +25,6 @@ const AnimatedText = React.forwardRef<HTMLDivElement, AnimatedTextProps>(
       underlineDuration = 1.5,
       ...props
     },
-    ref
   ) => {
     const controls = useAnimation();
     const { ref: inViewRef, inView } = useInView({ triggerOnce: false, threshold: 0.3 });
