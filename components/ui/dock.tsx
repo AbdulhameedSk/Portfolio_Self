@@ -1,6 +1,6 @@
 "use client";
 
-import React, { PropsWithChildren, useRef } from "react";
+import React, { useRef } from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { motion, useMotionValue, useSpring, useTransform, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -35,7 +35,7 @@ const Dock = React.forwardRef<HTMLDivElement, DockProps>(
       return React.Children.map(children, (child, index) => {
         if (React.isValidElement(child) && child.type === DockIcon) {
           return React.cloneElement(child, {
-            ...child.props,
+            ...(child.props as object),
             mouseX,
             magnification,
             index,
@@ -73,7 +73,7 @@ Dock.displayName = "Dock";
 export interface DockIconProps {
   size?: number;
   magnification?: number;
-  mouseX?: any;
+  mouseX?: ReturnType<typeof useMotionValue>;
   className?: string;
   children?: React.ReactNode;
   index?: number;
@@ -90,27 +90,24 @@ const DockIcon = ({
 }: DockIconProps) => {
   const ref = useRef<HTMLDivElement>(null);
 
-  // Only create the transforms if mouseX is defined
-  const width = mouseX ? useSpring(
-    useTransform(
-      mouseX,
-      (val: number) => {
-        const bounds = ref.current?.getBoundingClientRect() ?? { x: 0, width: 0 };
-        return Math.max(
-          size,
-          Math.min(
-            magnification,
-            size + (magnification - size) * (1 - Math.abs(140) / 140)
-          )
-        );
-      }
-    ),
-    {
-      mass: 0.1,
-      stiffness: 150,
-      damping: 12,
-    }
-  ) : size;
+  const springConfig = {
+    mass: 0.1,
+    stiffness: 150,
+    damping: 12,
+  };
+
+  const width = useSpring(
+    useTransform(mouseX, (val: number) => {
+      return Math.max(
+        size,
+        Math.min(
+          magnification,
+          size + (magnification - size) * (1 - Math.abs(140) / 140)
+        )
+      );
+    }),
+    springConfig
+  );
 
   return (
     <motion.div
