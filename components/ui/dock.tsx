@@ -60,12 +60,10 @@ const Dock = React.forwardRef<HTMLDivElement, DockProps>(
           "items-end": direction === "bottom",
         })}
       >
-        <AnimatePresence>
-          {renderChildren()}
-        </AnimatePresence>
+        <AnimatePresence>{renderChildren()}</AnimatePresence>
       </motion.div>
     );
-  },
+  }
 );
 
 Dock.displayName = "Dock";
@@ -97,16 +95,14 @@ const DockIcon = ({
   };
 
   const width = useSpring(
-    useTransform(mouseX, (val: number) => {
+    useTransform(mouseX, (val) => {
+      if (typeof val !== "number") return size; // Ensure val is always a number
       const distance = Math.abs(val - (ref.current?.offsetLeft ?? 0) - size / 2);
       return Math.max(
         size,
-        Math.min(
-          magnification,
-          size + (magnification - size) * (1 - distance / 140)
-        )
+        Math.min(magnification, size + (magnification - size) * (1 - distance / 140))
       );
-    }),
+    }) as unknown as number, // Cast to ensure TypeScript treats it as a number
     springConfig
   );
 
@@ -116,29 +112,29 @@ const DockIcon = ({
       initial={{ opacity: 0, scale: 0 }}
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0 }}
-      transition={{ 
-        duration: 0.3, 
+      transition={{
+        duration: 0.3,
         delay: index * 0.1,
         scale: {
           type: "spring",
           damping: 12,
           stiffness: 200,
-        }
+        },
       }}
-      whileHover={{ 
-        scale: 1.5,  // Increased from 1.1 to 1.5 for more dramatic hover effect
-        rotate: 5,   // Added slight rotation for more dynamic feel
-        transition: { 
+      whileHover={{
+        scale: 1.5,
+        rotate: 5,
+        transition: {
           duration: 0.3,
           type: "spring",
-          stiffness: 300
-        }
+          stiffness: 300,
+        },
       }}
       whileTap={{ scale: 0.9 }}
       style={{ width }}
       className={cn(
         "flex aspect-square cursor-pointer items-center justify-center rounded-full",
-        className,
+        className
       )}
       {...props}
     >
