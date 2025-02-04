@@ -1,5 +1,4 @@
 import React from 'react'
-import ExpandableCardDemo from '../expandable-card-demo-standard'
 import Carousel from './carousel'
 const slides = [
   {

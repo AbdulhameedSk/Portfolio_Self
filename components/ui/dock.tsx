@@ -38,8 +38,8 @@ const Dock = React.forwardRef<HTMLDivElement, DockProps>(
       return React.Children.map(children, (child, index) => {
         if (React.isValidElement(child) && child.type === DockIcon) {
           return React.cloneElement(child, {
-            ...child.props,
-            mouseX,
+            ...(typeof child.props === 'object' ? child.props : {}),
+            mouseX: mouseX as any,
             magnification,
             distance,
             index,
@@ -51,13 +51,14 @@ const Dock = React.forwardRef<HTMLDivElement, DockProps>(
 
     return (
       <motion.div
+        {...(props as any)}
         ref={ref}
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
         onMouseMove={(e) => mouseX.set(e.pageX)}
         onMouseLeave={() => mouseX.set(Infinity)}
-        {...props}
+        {...(props as Omit<React.HTMLAttributes<HTMLDivElement>, 'onDrag'>)}
         className={cn(dockVariants({ className }), {
           "items-start": direction === "top",
           "items-center": direction === "middle",
@@ -74,7 +75,8 @@ const Dock = React.forwardRef<HTMLDivElement, DockProps>(
 
 Dock.displayName = "Dock";
 
-export interface DockIconProps {
+export interface DockIconProps extends React.HTMLAttributes<HTMLDivElement> {
+  mouseX?: any;
   size?: number;
   magnification?: number;
   distance?: number;
