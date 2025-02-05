@@ -15,17 +15,18 @@ interface AnimatedTextProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const AnimatedText = React.forwardRef<HTMLDivElement, AnimatedTextProps>(
-  (
-    {
+  (props, ref) => {
+    const {
       text,
       textClassName,
       underlineClassName,
       underlinePath = "M 0,10 Q 75,0 150,10 Q 225,20 300,10",
       underlineHoverPath = "M 0,10 Q 75,20 150,10 Q 225,0 300,10",
       underlineDuration = 1.5,
-      ...props
-    },
-  ) => {
+      className,
+      ...otherProps
+    } = props;
+
     const controls = useAnimation();
     const { ref: inViewRef, inView } = useInView({ triggerOnce: false, threshold: 0.3 });
 
@@ -51,10 +52,11 @@ const AnimatedText = React.forwardRef<HTMLDivElement, AnimatedTextProps>(
 
     return (
       <div
-        ref={inViewRef}
-        className={cn("flex flex-col items-center justify-center gap-2", props.className)}
+        ref={ref}
+        className={cn("flex flex-col items-center justify-center gap-2", className)}
+        {...otherProps}
       >
-        <div className="relative">
+        <div className="relative" ref={inViewRef}>
           <motion.h1
             className={cn("text-4xl font-bold text-center", textClassName)}
             initial="hidden"
