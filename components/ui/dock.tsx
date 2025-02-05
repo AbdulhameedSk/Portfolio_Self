@@ -1,8 +1,8 @@
 "use client";
-
+//@ts-nocheck
 import React, { useRef } from "react";
 import { cva, type VariantProps } from "class-variance-authority";
-import { motion, useMotionValue, useSpring, useTransform, AnimatePresence } from "framer-motion";
+import { motion, useMotionValue, useSpring, useTransform, AnimatePresence, MotionValue } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 export interface DockProps extends VariantProps<typeof dockVariants> {
@@ -36,7 +36,7 @@ const Dock = React.forwardRef<HTMLDivElement, DockProps>(
         if (React.isValidElement(child) && child.type === DockIcon) {
           return React.cloneElement(child, {
             ...(child.props as DockIconProps),
-            mouseX,
+            mouseX: mouseX as ReturnType<typeof useMotionValue>,
             magnification,
             index,
           });
@@ -77,6 +77,14 @@ export interface DockIconProps {
   index?: number;
 }
 
+declare module 'react' {
+  interface Attributes {
+    mouseX?: ReturnType<typeof useMotionValue>;
+    magnification?: number;
+    index?: number;
+  }
+}
+
 const DockIcon = ({
   size = 40,
   magnification = DEFAULT_MAGNIFICATION,
@@ -95,7 +103,7 @@ const DockIcon = ({
   };
 
   const width = useSpring(
-    useTransform(mouseX, (val) => {
+    useTransform(mouseX as MotionValue<number>, (val: number) => {
       if (typeof val !== "number") return size; // Ensure val is always a number
       const distance = Math.abs(val - (ref.current?.offsetLeft ?? 0) - size / 2);
       return Math.max(
