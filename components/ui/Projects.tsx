@@ -41,10 +41,11 @@ const slides = [
 
 const Projects = () => {
   return (
-    <div className='h-screen text-white'>
-<Carousel slides={slides} />
-</div>
-  )
-}
+    <section id="projects" className='h-screen text-white'>
+      <Carousel slides={slides} />
+    </section>
+  );
+};
+
 
 export default Projects

@@ -168,9 +168,9 @@ const cloudslugs = ["aws", "googlecloud", "digitalocean", "heroku", "netlify", "
 
 const Skills = () => {
   return (
-    <div className="flex items-center min-h-screen px-10 bg-black text-white justify-between">
-      <h1 className="text-4xl font-bold text-center">SKILLS</h1>
-      <div className="grid grid-cols-1 md:grid-cols-3">
+    <div className="flex flex-row md:flex items-center min-h-screen px-10 bg-black text-white justify-between">
+      <h1 className="  text-4xl font-bold text-center py-2">SKILLS</h1>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         <IconCloudDemo name="Frontend Development" type={feslugs} />
         <IconCloudDemo name="Backend Development" type={beslugs} />
         <IconCloudDemo name="API Development" type={apislugs} />
