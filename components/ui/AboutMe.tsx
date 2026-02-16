@@ -95,7 +95,7 @@ const AboutMe = () => {
                 🛠 DevOps & AWS
               </motion.div>
               <motion.div whileHover={{ scale: 1.1 }} className="bg-gray-800/50 backdrop-blur-lg p-4 rounded-lg shadow-lg">
-                ☁️ Cloud Computing
+                ⚙️ Pega Development
               </motion.div>
 
             </div>

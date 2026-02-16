@@ -30,7 +30,18 @@ const Header = () => {
       </nav>
 
       <div className="flex items-center">
-        <InteractiveHoverButton className="m-2" />
+<InteractiveHoverButton
+  className="m-2"
+  onClick={() =>
+    window.open(
+      "https://www.linkedin.com/in/shaikabdulhameed/",
+      "_blank",
+      "noopener,noreferrer"
+    )
+  }
+>
+  LinkedIn
+</InteractiveHoverButton>
       </div>
     </header>
   );
